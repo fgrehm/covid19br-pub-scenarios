@@ -1,0 +1,39 @@
+metadata:
+  short_name: "[BA] Governo Estadual"
+  full_name: "Governo Estadual da Bahia"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-ba"
+inputs:
+  tweets:
+    user: "governodabahia"
+  articles:
+    crawler:
+      urls:
+      - "http://www.ba.gov.br/noticias"
+      - "http://www.ba.gov.br/noticias?field_categoria_target_id=All&field_tags_target_id&sort_by=field_data_da_noticia_value&sort_order=DESC&page=1"
+      - "http://www.ba.gov.br/noticias?field_categoria_target_id=All&field_tags_target_id&sort_by=field_data_da_noticia_value&sort_order=DESC&page=2"
+      link_extractor:
+        css: ".item-list ul.list-news .views-field-title a"
+        value: "@href"
+    scraper:
+      extract:
+        title:
+          css: "#main-content .field--name-node-title h2"
+          value: "string(.)"
+        excerpt:
+          css: "meta[name=description]"
+          value: "@content"
+        full_text:
+          css: "#main-content .node--type-noticias .field--name-body"
+          value: "string(.)"
+        image_url:
+          css: ".galeria-multimidia .field--item:first-of-type img"
+          value: "@src"
+          repeat: true
+        published_at:
+          css: "#main-content .field--name-field-data-da-noticia"
+          value: "string(.)"
+      template:
+        published_at: "{{ published_at | strip | regex_replace: '(\\d+)/(\\d+)/(\\d+) - (\\d+):(\\d+)', '\\3-\\2-\\1 \\4:\\5:00 -03:00' }}"
+# outputs:
+#   s3: true

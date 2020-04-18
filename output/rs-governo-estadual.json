@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "name": "[RS] Governo Estadual (v1)",
+  "description": "Notícias e tweets",
+  "guid": "br-gov-rs-v1",
+  "exported_at": "2020-04-17 22:53:21 -0300",
+  "agents": [
+    {
+      "type": "Agents::TwitterUserAgent",
+      "name": "[RS] Governo Estadual (v1) - Twitter Ingestion - Timeline Watcher",
+      "guid": "br-gov-rs-v1-twitter-timeline",
+      "disabled": false,
+      "options": {
+        "username": "governo_rs",
+        "include_retweets": "true",
+        "exclude_replies": "false",
+        "expected_update_period_in_days": "1",
+        "choose_home_time_line": "false",
+        "starting_at": "2020-01-01 00:00:00 +0000"
+      },
+      "schedule": "every_5m",
+      "keep_events_for": 604800
+    },
+    {
+      "type": "Agents::JavaScriptAgent",
+      "name": "[RS] Governo Estadual (v1) - Twitter Ingestion - Wrap",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-twitter-wrap",
+      "options": {
+        "language": "JavaScript",
+        "code": "Agent.receive = function() {\r  var events = this.incomingEvents();\r  for(var i = 0; i < events.length; i++) {\r    var payload = events[i].payload;\r    this.createEvent({ tweet: payload });\r  }\r}\r",
+        "expected_receive_period_in_days": "1",
+        "expected_update_period_in_days": "1"
+      },
+      "schedule": "never",
+      "keep_events_for": 86400,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::EventFormattingAgent",
+      "name": "[RS] Governo Estadual (v1) - Twitter Ingestion - Format",
+      "guid": "br-gov-rs-v1-twitter-format",
+      "disabled": false,
+      "options": {
+        "instructions": {
+          "full_text": "{{ tweet.full_text | strip }}",
+          "image_url": "{% assign medium = tweet.entities.media | first %}{{ medium.media_url_https }}",
+          "published_at": "{{ created_at | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "found_at": "{{ \"now\" | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "url": "https://twitter.com/{{ tweet.user.screen_name }}/{{ tweet.id }}",
+          "content_type": "tweet"
+        },
+        "matchers": [
+
+        ],
+        "mode": "merge"
+      },
+      "keep_events_for": 86400,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::RssAgent",
+      "name": "[RS] Governo Estadual (v1) - Articles Ingestion - RSS Watcher",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-articles-rss-input",
+      "options": {
+        "expected_update_period_in_days": "1",
+        "clean": "true",
+        "url": "https://estado.rs.gov.br/rss"
+      },
+      "schedule": "every_30m",
+      "keep_events_for": 2592000
+    },
+    {
+      "type": "Agents::JavaScriptAgent",
+      "name": "[RS] Governo Estadual (v1) - Articles Ingestion - RSS Wrap",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-articles-rss-wrap",
+      "options": {
+        "language": "JavaScript",
+        "code": "Agent.receive = function() {\r  var events = this.incomingEvents();\r  for(var i = 0; i < events.length; i++) {\r    var payload = events[i].payload;\r    this.createEvent({ rss_item: payload, url: payload.url });\r  }\r}\r",
+        "expected_receive_period_in_days": "1",
+        "expected_update_period_in_days": "1"
+      },
+      "schedule": "never",
+      "keep_events_for": 86400,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::WebhookAgent",
+      "name": "[RS] Governo Estadual (v1) - Articles Ingestion - Manual Backfill",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-articles-backfill",
+      "options": {
+        "secret": "3ab9c0ab11b84aaf782667f3851d8325",
+        "expected_receive_period_in_days": "365",
+        "payload_path": "._json",
+        "event_headers": "",
+        "event_headers_key": "headers"
+      },
+      "keep_events_for": 2592000
+    },
+    {
+      "type": "Agents::WebsiteAgent",
+      "name": "[RS] Governo Estadual (v1) - Articles Ingestion - Crawler",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-articles-crawler",
+      "options": {
+        "expected_update_period_in_days": "1",
+        "url": [
+          "https://estado.rs.gov.br/ultimas-noticias"
+        ],
+        "type": "html",
+        "mode": "on_change",
+        "extract": {
+          "url": {
+            "css": "ul.media-list li a.pull-left",
+            "value": "@href"
+          }
+        },
+        "template": {
+          "url": "{{ url | to_uri: _response_.url }}"
+        }
+      },
+      "schedule": "every_30m",
+      "keep_events_for": 2592000,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::WebsiteAgent",
+      "name": "[RS] Governo Estadual (v1) - Articles Ingestion - Scrape",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-articles-scrape",
+      "options": {
+        "expected_update_period_in_days": "1",
+        "url_from_event": "{{ url | strip }}",
+        "type": "html",
+        "mode": "merge",
+        "extract": {
+          "title": {
+            "css": "meta[property='og:title']",
+            "value": "@content"
+          },
+          "excerpt": {
+            "css": "meta[property='og:description']",
+            "value": "@content"
+          },
+          "full_text": {
+            "css": ".artigo__texto",
+            "value": "string(.)"
+          },
+          "image_url": {
+            "css": "meta[property='og:image']",
+            "value": "@content"
+          },
+          "published_at": {
+            "css": "meta[property='article:published_time']",
+            "value": "@content"
+          },
+          "updated_at": {
+            "css": "meta[property='article:modified_time']",
+            "value": "@content"
+          }
+        },
+        "template": {
+          "title": "{{ title | strip }}",
+          "excerpt": "{{ excerpt | strip }}",
+          "full_text": "{{ full_text | strip }}",
+          "image_url": "{% if image_url %}{{ image_url | strip | to_uri: _response_.url }}{% endif %}",
+          "url": "{{ url | strip }}",
+          "found_at": "{{ \"now\" | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "published_at": "{{ published_at | strip | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "updated_at": "{{ updated_at | strip | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "content_type": "article"
+        }
+      },
+      "schedule": "never",
+      "keep_events_for": 2592000,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::EventFormattingAgent",
+      "name": "[RS] Governo Estadual (v1) - S3 Archive - Prepare",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-s3-prepare",
+      "options": {
+        "instructions": {
+          "source_guid": "br-gov-rs",
+          "url_hash": "{{ url | sha1 }}",
+          "full_text_hash": "{{ full_text | sha1 }}",
+          "full_text": "{{ full_text | strip }}"
+        },
+        "matchers": [
+
+        ],
+        "mode": "merge"
+      },
+      "keep_events_for": 86400,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::JavaScriptAgent",
+      "name": "[RS] Governo Estadual (v1) - S3 Archive - Serialize",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-s3-serialize",
+      "options": {
+        "language": "JavaScript",
+        "code": "Agent.receive = function() {\r  var events = this.incomingEvents();\r  for(var i = 0; i < events.length; i++) {\r    var payload = events[i].payload;\r    var key = payload.source_guid + \"/\" + payload.content_type + \"-\" + payload.url_hash + \".json\";\r    payload.key = key;\r    var serialized = JSON.stringify(payload);\r    this.createEvent({ serialized: serialized, key: key });\r  }\r}\r",
+        "expected_receive_period_in_days": "1",
+        "expected_update_period_in_days": "1"
+      },
+      "schedule": "never",
+      "keep_events_for": 2592000,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::S3Agent",
+      "name": "[RS] Governo Estadual (v1) - S3 Archive - Upload",
+      "disabled": false,
+      "guid": "br-gov-rs-v1-s3-upload",
+      "options": {
+        "mode": "write",
+        "access_key_id": "{% credential aws-key-id %}",
+        "access_key_secret": "{% credential aws-key-secret %}",
+        "region": "us-east-1",
+        "watch": "false",
+        "bucket": "{% credential aws-bucket-input %}",
+        "filename": "{{ key }}",
+        "data": "{{ serialized }}"
+      },
+      "schedule": "never",
+      "keep_events_for": 0,
+      "propagate_immediately": true
+    }
+  ],
+  "links": [
+    {
+      "source": 0,
+      "receiver": 1
+    },
+    {
+      "source": 1,
+      "receiver": 2
+    },
+    {
+      "source": 2,
+      "receiver": 8
+    },
+    {
+      "source": 3,
+      "receiver": 4
+    },
+    {
+      "source": 4,
+      "receiver": 7
+    },
+    {
+      "source": 5,
+      "receiver": 7
+    },
+    {
+      "source": 6,
+      "receiver": 7
+    },
+    {
+      "source": 7,
+      "receiver": 8
+    },
+    {
+      "source": 8,
+      "receiver": 9
+    },
+    {
+      "source": 9,
+      "receiver": 10
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+metadata:
+  short_name: "[RS] Governo Estadual"
+  full_name: "Governo Estadual do Rio Grande do Sul"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-rs"
+inputs:
+  tweets:
+    user: "governo_rs"
+  articles:
+    rss:
+      url: "https://estado.rs.gov.br/rss"
+    crawler:
+      # TODO: Also support https://estado.rs.gov.br/agencia-de-noticias
+      urls:
+      - "https://estado.rs.gov.br/ultimas-noticias"
+      link_extractor:
+        css: "ul.media-list li a.pull-left"
+        value: "@href"
+      # javascript: true
+      # urls:
+      # - "https://estado.rs.gov.br/ultimas-noticias"
+      # - "https://estado.rs.gov.br/ultimas-noticias?palavraschave=&classificacao=&publicacaodatahoraini=&publicacaodatahorafim=&ordem=RECENTES&pagina=2"
+      # link_extractor:
+      #   css: ".conteudo-lista__item__titulo a"
+      #   value: "@href"
+    scraper:
+      extract:
+        title:
+          # TODO: Support for these
+          #   meta_prop: 'og:title@content'
+          #   meta_name: 'twitter:description@content'
+          css: "meta[property='og:title']"
+          value: "@content"
+        excerpt:
+          css: "meta[property='og:description']"
+          value: "@content"
+        full_text:
+          css: ".artigo__texto"
+          value: "string(.)"
+        image_url:
+          css: "meta[property='og:image']"
+          value: "@content"
+        published_at:
+          css: "meta[property='article:published_time']"
+          value: "@content"
+        updated_at:
+          css: "meta[property='article:modified_time']"
+          value: "@content"
+# outputs:
+#   s3: true

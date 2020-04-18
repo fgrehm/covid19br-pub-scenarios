@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "name": "[BA] Governo Estadual (v1)",
+  "description": "Notícias e tweets",
+  "guid": "br-gov-ba-v1",
+  "exported_at": "2020-04-17 22:53:21 -0300",
+  "agents": [
+    {
+      "type": "Agents::TwitterUserAgent",
+      "name": "[BA] Governo Estadual (v1) - Twitter Ingestion - Timeline Watcher",
+      "guid": "br-gov-ba-v1-twitter-timeline",
+      "disabled": false,
+      "options": {
+        "username": "governodabahia",
+        "include_retweets": "true",
+        "exclude_replies": "false",
+        "expected_update_period_in_days": "1",
+        "choose_home_time_line": "false",
+        "starting_at": "2020-01-01 00:00:00 +0000"
+      },
+      "schedule": "every_5m",
+      "keep_events_for": 604800
+    },
+    {
+      "type": "Agents::JavaScriptAgent",
+      "name": "[BA] Governo Estadual (v1) - Twitter Ingestion - Wrap",
+      "disabled": false,
+      "guid": "br-gov-ba-v1-twitter-wrap",
+      "options": {
+        "language": "JavaScript",
+        "code": "Agent.receive = function() {\r  var events = this.incomingEvents();\r  for(var i = 0; i < events.length; i++) {\r    var payload = events[i].payload;\r    this.createEvent({ tweet: payload });\r  }\r}\r",
+        "expected_receive_period_in_days": "1",
+        "expected_update_period_in_days": "1"
+      },
+      "schedule": "never",
+      "keep_events_for": 86400,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::EventFormattingAgent",
+      "name": "[BA] Governo Estadual (v1) - Twitter Ingestion - Format",
+      "guid": "br-gov-ba-v1-twitter-format",
+      "disabled": false,
+      "options": {
+        "instructions": {
+          "full_text": "{{ tweet.full_text | strip }}",
+          "image_url": "{% assign medium = tweet.entities.media | first %}{{ medium.media_url_https }}",
+          "published_at": "{{ created_at | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "found_at": "{{ \"now\" | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "url": "https://twitter.com/{{ tweet.user.screen_name }}/{{ tweet.id }}",
+          "content_type": "tweet"
+        },
+        "matchers": [
+
+        ],
+        "mode": "merge"
+      },
+      "keep_events_for": 86400,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::WebhookAgent",
+      "name": "[BA] Governo Estadual (v1) - Articles Ingestion - Manual Backfill",
+      "disabled": false,
+      "guid": "br-gov-ba-v1-articles-backfill",
+      "options": {
+        "secret": "4329e2dd3d11181eee5ab559f6f35d45",
+        "expected_receive_period_in_days": "365",
+        "payload_path": "._json",
+        "event_headers": "",
+        "event_headers_key": "headers"
+      },
+      "keep_events_for": 2592000
+    },
+    {
+      "type": "Agents::WebsiteAgent",
+      "name": "[BA] Governo Estadual (v1) - Articles Ingestion - Crawler",
+      "disabled": false,
+      "guid": "br-gov-ba-v1-articles-crawler",
+      "options": {
+        "expected_update_period_in_days": "1",
+        "url": [
+          "http://www.ba.gov.br/noticias",
+          "http://www.ba.gov.br/noticias?field_categoria_target_id=All&field_tags_target_id&sort_by=field_data_da_noticia_value&sort_order=DESC&page=1",
+          "http://www.ba.gov.br/noticias?field_categoria_target_id=All&field_tags_target_id&sort_by=field_data_da_noticia_value&sort_order=DESC&page=2"
+        ],
+        "type": "html",
+        "mode": "on_change",
+        "extract": {
+          "url": {
+            "css": ".item-list ul.list-news .views-field-title a",
+            "value": "@href"
+          }
+        },
+        "template": {
+          "url": "{{ url | to_uri: _response_.url }}"
+        }
+      },
+      "schedule": "every_30m",
+      "keep_events_for": 2592000,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::WebsiteAgent",
+      "name": "[BA] Governo Estadual (v1) - Articles Ingestion - Scrape",
+      "disabled": false,
+      "guid": "br-gov-ba-v1-articles-scrape",
+      "options": {
+        "expected_update_period_in_days": "1",
+        "url_from_event": "{{ url | strip }}",
+        "type": "html",
+        "mode": "merge",
+        "extract": {
+          "title": {
+            "css": "#main-content .field--name-node-title h2",
+            "value": "string(.)"
+          },
+          "excerpt": {
+            "css": "meta[name=description]",
+            "value": "@content"
+          },
+          "full_text": {
+            "css": "#main-content .node--type-noticias .field--name-body",
+            "value": "string(.)"
+          },
+          "image_url": {
+            "css": ".galeria-multimidia .field--item:first-of-type img",
+            "value": "@src",
+            "repeat": true
+          },
+          "published_at": {
+            "css": "#main-content .field--name-field-data-da-noticia",
+            "value": "string(.)"
+          }
+        },
+        "template": {
+          "title": "{{ title | strip }}",
+          "excerpt": "{{ excerpt | strip }}",
+          "full_text": "{{ full_text | strip }}",
+          "image_url": "{% if image_url %}{{ image_url | strip | to_uri: _response_.url }}{% endif %}",
+          "url": "{{ url | strip }}",
+          "found_at": "{{ \"now\" | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "published_at": "{{ published_at | strip | regex_replace: '(\\d+)/(\\d+)/(\\d+) - (\\d+):(\\d+)', '\\3-\\2-\\1 \\4:\\5:00 -03:00' }}",
+          "updated_at": "{{ updated_at | strip | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "content_type": "article"
+        }
+      },
+      "schedule": "never",
+      "keep_events_for": 2592000,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::EventFormattingAgent",
+      "name": "[BA] Governo Estadual (v1) - S3 Archive - Prepare",
+      "disabled": false,
+      "guid": "br-gov-ba-v1-s3-prepare",
+      "options": {
+        "instructions": {
+          "source_guid": "br-gov-ba",
+          "url_hash": "{{ url | sha1 }}",
+          "full_text_hash": "{{ full_text | sha1 }}",
+          "full_text": "{{ full_text | strip }}"
+        },
+        "matchers": [
+
+        ],
+        "mode": "merge"
+      },
+      "keep_events_for": 86400,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::JavaScriptAgent",
+      "name": "[BA] Governo Estadual (v1) - S3 Archive - Serialize",
+      "disabled": false,
+      "guid": "br-gov-ba-v1-s3-serialize",
+      "options": {
+        "language": "JavaScript",
+        "code": "Agent.receive = function() {\r  var events = this.incomingEvents();\r  for(var i = 0; i < events.length; i++) {\r    var payload = events[i].payload;\r    var key = payload.source_guid + \"/\" + payload.content_type + \"-\" + payload.url_hash + \".json\";\r    payload.key = key;\r    var serialized = JSON.stringify(payload);\r    this.createEvent({ serialized: serialized, key: key });\r  }\r}\r",
+        "expected_receive_period_in_days": "1",
+        "expected_update_period_in_days": "1"
+      },
+      "schedule": "never",
+      "keep_events_for": 2592000,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::S3Agent",
+      "name": "[BA] Governo Estadual (v1) - S3 Archive - Upload",
+      "disabled": false,
+      "guid": "br-gov-ba-v1-s3-upload",
+      "options": {
+        "mode": "write",
+        "access_key_id": "{% credential aws-key-id %}",
+        "access_key_secret": "{% credential aws-key-secret %}",
+        "region": "us-east-1",
+        "watch": "false",
+        "bucket": "{% credential aws-bucket-input %}",
+        "filename": "{{ key }}",
+        "data": "{{ serialized }}"
+      },
+      "schedule": "never",
+      "keep_events_for": 0,
+      "propagate_immediately": true
+    }
+  ],
+  "links": [
+    {
+      "source": 0,
+      "receiver": 1
+    },
+    {
+      "source": 1,
+      "receiver": 2
+    },
+    {
+      "source": 2,
+      "receiver": 6
+    },
+    {
+      "source": 3,
+      "receiver": 5
+    },
+    {
+      "source": 4,
+      "receiver": 5
+    },
+    {
+      "source": 5,
+      "receiver": 6
+    },
+    {
+      "source": 6,
+      "receiver": 7
+    },
+    {
+      "source": 7,
+      "receiver": 8
+    }
+  ]
+}
