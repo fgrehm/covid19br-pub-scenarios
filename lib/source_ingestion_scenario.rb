@@ -103,7 +103,7 @@ Agent.receive = function() {
         instructions: {
           full_text: "{{ tweet.full_text | strip }}",
           image_url: "{% assign medium = tweet.entities.media | first %}{{ medium.media_url_https }}",
-          published_at: "{{ created_at | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          published_at: "{{ tweet.created_at | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
           found_at: "{{ \"now\" | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
           url: "https://twitter.com/{{ tweet.user.screen_name }}/status/{{ tweet.id_str }}",
           content_type: "tweet"
