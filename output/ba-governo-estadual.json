@@ -3,7 +3,7 @@
   "name": "[BA] Governo Estadual (v1)",
   "description": "Notícias e tweets",
   "guid": "br-gov-ba-v1",
-  "exported_at": "2020-04-17 22:53:21 -0300",
+  "exported_at": "2020-04-18 22:55:42 -0300",
   "agents": [
     {
       "type": "Agents::TwitterUserAgent",
@@ -56,7 +56,7 @@
         "mode": "merge"
       },
       "keep_events_for": 86400,
-      "propagate_immediately": true
+      "propagate_immediately": false
     },
     {
       "type": "Agents::WebhookAgent",
@@ -64,7 +64,7 @@
       "disabled": false,
       "guid": "br-gov-ba-v1-articles-backfill",
       "options": {
-        "secret": "4329e2dd3d11181eee5ab559f6f35d45",
+        "secret": "{% credential webhooks-secret %}",
         "expected_receive_period_in_days": "365",
         "payload_path": "._json",
         "event_headers": "",
