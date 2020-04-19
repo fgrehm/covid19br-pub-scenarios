@@ -1,0 +1,36 @@
+metadata:
+  short_name: "[SP] Governo Estadual"
+  full_name: "Governo Estadual de São Paulo"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-sp"
+inputs:
+  tweets:
+    user: "governosp"
+  articles:
+    rss:
+      url: "https://www.saopaulo.sp.gov.br/ultimas-noticias/feed"
+    scraper:
+      extract:
+        title:
+          # TODO: Support for these
+          #   meta_prop: 'og:title@content'
+          #   meta_name: 'twitter:description@content'
+          css: "h1.title"
+          value: "string(.)"
+        excerpt:
+          css: "meta[property='og:description']"
+          value: "@content"
+        full_text:
+          css: "article.article-main"
+          value: "string(.)"
+        image_url:
+          css: "meta[property='og:image']"
+          value: "@content"
+        published_at:
+          css: "meta[property='article:published_time']"
+          value: "@content"
+        updated_at:
+          css: "meta[property='article:modified_time']"
+          value: "@content"
+# outputs:
+#   s3: true
