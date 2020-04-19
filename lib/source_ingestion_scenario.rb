@@ -112,7 +112,7 @@ Agent.receive = function() {
         mode: "merge"
       },
       keep_events_for: 60 * 60 * 24, # 1 day
-      propagate_immediately: true,
+      propagate_immediately: false,
       targets: "s3-prepare"
     }
   end
@@ -183,9 +183,7 @@ Agent.receive = function() {
         disabled: false,
         guid: "articles-backfill",
         options: {
-          # This is intentionally made random, ideally huginn should support a
-          # credential here but it doesn't
-          secret: SecureRandom.hex(16),
+          secret: "{% credential webhooks-secret %}",
           expected_receive_period_in_days: "365",
           payload_path: "._json",
           event_headers: "",
