@@ -226,8 +226,8 @@ Agent.receive = function() {
           url: crawler.fetch("urls"),
           type: "html",
           mode: "on_change",
-          extract: { url: crawler.fetch("link_extractor") },
-          template: { url: "{{ url | to_uri: _response_.url }}" }
+          extract: (crawler["extract"] || {}).merge({ url: crawler.fetch("link_extractor") }),
+          template: (crawler["template"] || {}).merge({ url: "{{ url | to_uri: _response_.url }}" })
         },
         schedule: "every_30m",
         keep_events_for: 60 * 60 * 24 * 30, # 1 month
