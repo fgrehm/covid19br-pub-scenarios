@@ -1,0 +1,40 @@
+metadata:
+  short_name: "[RJ] Governo Estadual"
+  full_name: "Governo Estadual do Rio de Janeiro"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-rj"
+inputs:
+  tweets:
+    user: "GovRJ"
+  articles:
+    crawler:
+      urls:
+      - "http://rj.gov.br/NoticiaListar.aspx"
+      link_extractor:
+        css: ".noticia-linha h1 a"
+        value: "@href"
+      extract:
+        excerpt:
+          css: ".noticia-linha .noticia-coluna-direita-texto p:nth-child(4)"
+          value: "string(.)"
+        published_at:
+          css: ".noticia-linha .noticia-coluna-direita-texto p:regex(\"\\d{2}/\\d{2}/\\d{4}\\s+\\d+:\\d+\")"
+          value: "string(.)"
+      template:
+        published_at: "{{ published_at | strip | regex_replace: '(\\d+)/(\\d+)/(\\d+)[\\s-]+(\\d+):(\\d+)', '\\3-\\2-\\1 \\4:\\5:00 -03:00' }}"
+    scraper:
+      extract:
+        title:
+          # TODO: Support for these
+          #   meta_prop: 'og:title@content'
+          #   meta_name: 'twitter:description@content'
+          css: "meta[property='og:title']"
+          value: "@content"
+        full_text:
+          css: "#estrutura + section"
+          value: "string(.)"
+        image_url:
+          css: "meta[property='og:image']"
+          value: "@content"
+# outputs:
+#   s3: truechild(6child(6))
