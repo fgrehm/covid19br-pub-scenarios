@@ -1,0 +1,37 @@
+metadata:
+  short_name: "[AM] Governo Estadual"
+  full_name: "Governo Estadual do Amazonas"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-am"
+inputs:
+  tweets:
+    user: "AmazonasGoverno"
+  articles:
+    rss:
+      url: "http://www.amazonas.am.gov.br/feed/"
+    crawler:
+      urls:
+      - "http://www.amazonas.am.gov.br/noticias/"
+      link_extractor:
+        css: "..."
+        value: "@href"
+    scraper:
+      extract:
+        title:
+          css: "#noticia_speaker h2"
+          value: "string(.)"
+        full_text:
+          css: "#noticia_speaker"
+          value: "string(.)"
+        image_url:
+          css: ".content-noticias-image-container img"
+          value: "@src"
+          repeat: true
+        published_at:
+          css: "#noticia_speaker time"
+          value: "string(.)"
+      template:
+        full_text: "{{ full_text | strip | strip_newlines | regex_replace: 'Share\\s*Reportar Erro.+', '' }}"
+        published_at: "{{ published_at | strip | regex_replace: '(\\d+):(\\d+)[\\s-]+(\\d+)/(\\d+)/(\\d+)', '\\5-\\4-\\3 \\1:\\2:00 -03:00' }}"
+# outputs:
+#   s3: true
