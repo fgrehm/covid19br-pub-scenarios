@@ -1,0 +1,48 @@
+metadata:
+  short_name: "[CE] Governo Estadual"
+  full_name: "Governo Estadual do Ceará"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-ce"
+inputs:
+  tweets:
+    user: "governodoceara"
+  articles:
+    rss:
+      url: "https://www.ceara.gov.br/feed"
+    # crawler:
+    #   urls:
+    # TODO: JS API CRAWLER https://www.ceara.gov.br/wp-json/wp/v2/posts/?_embed&orderby=date&per_page=5&page=4
+    #   - "https://www.ceara.gov.br/home/todas-as-noticias/"
+    #   link_extractor:
+    #     css: "..."
+    #     value: "..."
+    scraper:
+      extract:
+        title:
+          # TODO: Support for these
+          #   meta_prop: 'og:title@content'
+          #   meta_name: 'twitter:description@content'
+          css: "meta[property='og:title']"
+          value: "@content"
+        excerpt:
+          css: "meta[property='og:description']"
+          value: "@content"
+        full_text:
+          css: "#main article section.SingleContent"
+          value: "string(.)"
+        image_url:
+          css: "meta[property='og:image']"
+          value: "@content"
+          repeat: true
+        published_at:
+          css: "meta[property='article:published_time']"
+          value: "@content"
+        updated_at:
+          css: "meta[property='og:updated_time']"
+          value: "@content"
+          repeat: true
+      template:
+        full_text: "{{ full_text | strip | regex_replace: 'Acompanhe as ações do Governo pelo Telegram\\s*Voltar ao topo.+', '' }}"
+        title: "{{ title | strip | regex_replace: '\\s+-\\s+Governo do Estado do Ceará$', '' }}"
+# outputs:
+#   s3: true
