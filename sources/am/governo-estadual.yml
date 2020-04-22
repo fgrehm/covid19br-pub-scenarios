@@ -9,12 +9,12 @@ inputs:
   articles:
     rss:
       url: "http://www.amazonas.am.gov.br/feed/"
-    crawler:
-      urls:
-      - "http://www.amazonas.am.gov.br/noticias/"
-      link_extractor:
-        css: "..."
-        value: "@href"
+    # crawler:
+    #   urls:
+    #   - "http://www.amazonas.am.gov.br/noticias/"
+    #   link_extractor:
+    #     css: "..."
+    #     value: "@href"
     scraper:
       extract:
         title:
