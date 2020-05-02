@@ -60,7 +60,7 @@ class SourceIngestionScenario
         choose_home_time_line: "false",
         starting_at: "2020-01-01 00:00:00 +0000"
       },
-      schedule: "every_5m",
+      schedule: "every_10m",
       keep_events_for: 60 * 60 * 24 * 7, # 1 week
       targets: "twitter-wrap"
     }
