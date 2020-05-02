@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[ES] Governo Estadual"
+  full_name: "Governo Estadual do Espírito Santo"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-es"
+inputs:
+  tweets:
+    user: "GovernoES"
+# outputs:
+#   s3: true

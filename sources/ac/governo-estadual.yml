@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[AC] Governo Estadual"
+  full_name: "Governo Estadual do Acre"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-ac"
+inputs:
+  tweets:
+    user: "GovernoAcre"
+# outputs:
+#   s3: true

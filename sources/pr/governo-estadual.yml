@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[PR] Governo Estadual"
+  full_name: "Governo Estadual do Paraná"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-pr"
+inputs:
+  tweets:
+    user: "governoparana"
+# outputs:
+#   s3: true

@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[RN] Governo Estadual"
+  full_name: "Governo Estadual do Rio Grande do Norte"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-rn"
+inputs:
+  tweets:
+    user: "governodorn"
+# outputs:
+#   s3: true

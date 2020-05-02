@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[MS] Governo Estadual"
+  full_name: "Governo Estadual de Mato Grosso do Sul"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-ms"
+inputs:
+  tweets:
+    user: "GovernoMS"
+# outputs:
+#   s3: true

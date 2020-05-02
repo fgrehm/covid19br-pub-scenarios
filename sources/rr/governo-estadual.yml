@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[RR] Governo Estadual"
+  full_name: "Governo Estadual de Roraima"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-rr"
+inputs:
+  tweets:
+    user: "govroraima"
+# outputs:
+#   s3: true

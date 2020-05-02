@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[PE] Governo Estadual"
+  full_name: "Governo Estadual de Pernambuco"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-pe"
+inputs:
+  tweets:
+    user: "governope"
+# outputs:
+#   s3: true

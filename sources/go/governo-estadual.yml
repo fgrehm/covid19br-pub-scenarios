@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[GO] Governo Estadual"
+  full_name: "Governo Estadual de Goiás"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-go"
+inputs:
+  tweets:
+    user: "governo_go"
+# outputs:
+#   s3: true

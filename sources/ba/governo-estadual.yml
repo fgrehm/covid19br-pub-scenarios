@@ -26,6 +26,7 @@ inputs:
         full_text:
           css: "#main-content .node--type-noticias .field--name-body"
           value: "string(.)"
+        # TODO: Get full res image, this is tiny
         image_url:
           css: ".galeria-multimidia .field--item:first-of-type img"
           value: "@src"

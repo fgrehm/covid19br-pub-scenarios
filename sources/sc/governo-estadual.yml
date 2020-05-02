@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[SC] Governo Estadual"
+  full_name: "Governo Estadual de Santa Catarina"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-sc"
+inputs:
+  tweets:
+    user: "GovSC"
+# outputs:
+#   s3: true

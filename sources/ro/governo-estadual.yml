@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[RO] Governo Estadual"
+  full_name: "Governo Estadual de Rondônia"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-ro"
+inputs:
+  tweets:
+    user: "governoro"
+# outputs:
+#   s3: true

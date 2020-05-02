@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[DF] Governo Estadual"
+  full_name: "Governo Estadual do Distrito Federal"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-df"
+inputs:
+  tweets:
+    user: "Gov_DF"
+# outputs:
+#   s3: true

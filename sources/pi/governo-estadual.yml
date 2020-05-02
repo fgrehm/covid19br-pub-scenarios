@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[PI] Governo Estadual"
+  full_name: "Governo Estadual do Piauí"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-pi"
+inputs:
+  tweets:
+    user: "GovernodoPi"
+# outputs:
+#   s3: true

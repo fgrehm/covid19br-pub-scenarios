@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[MA] Governo Estadual"
+  full_name: "Governo Estadual do Maranhão"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-ma"
+inputs:
+  tweets:
+    user: "GovernoMA"
+# outputs:
+#   s3: true

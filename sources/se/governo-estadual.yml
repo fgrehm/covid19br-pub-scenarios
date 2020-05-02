@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[SE] Governo Estadual"
+  full_name: "Governo Estadual de Sergipe"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-se"
+inputs:
+  tweets:
+    user: "governosergipe"
+# outputs:
+#   s3: true

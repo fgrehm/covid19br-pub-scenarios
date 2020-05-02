@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[AL] Governo Estadual"
+  full_name: "Governo Estadual de Alagoas"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-al"
+inputs:
+  tweets:
+    user: "GovernoAlagoas"
+# outputs:
+#   s3: true

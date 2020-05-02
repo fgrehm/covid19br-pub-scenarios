@@ -1,0 +1,10 @@
+metadata:
+  short_name: "[MG] Governo Estadual"
+  full_name: "Governo Estadual de Minas Gerais"
+  description: "Notícias e tweets"
+  source_guid: "br-gov-mg"
+inputs:
+  tweets:
+    user: "governomg"
+# outputs:
+#   s3: true
