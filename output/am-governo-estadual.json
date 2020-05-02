@@ -3,7 +3,7 @@
   "name": "[AM] Governo Estadual (v1)",
   "description": "Notícias e tweets",
   "guid": "br-gov-am-v1",
-  "exported_at": "2020-04-21 00:04:13 -0300",
+  "exported_at": "2020-05-01 23:37:24 -0300",
   "agents": [
     {
       "type": "Agents::TwitterUserAgent",
@@ -18,7 +18,7 @@
         "choose_home_time_line": "false",
         "starting_at": "2020-01-01 00:00:00 +0000"
       },
-      "schedule": "every_5m",
+      "schedule": "every_10m",
       "keep_events_for": 604800
     },
     {
@@ -99,32 +99,6 @@
         "event_headers_key": "headers"
       },
       "keep_events_for": 2592000
-    },
-    {
-      "type": "Agents::WebsiteAgent",
-      "name": "[AM] Governo Estadual (v1) - Articles Ingestion - Crawler",
-      "disabled": false,
-      "guid": "br-gov-am-v1-articles-crawler",
-      "options": {
-        "expected_update_period_in_days": "1",
-        "url": [
-          "http://www.amazonas.am.gov.br/noticias/"
-        ],
-        "type": "html",
-        "mode": "on_change",
-        "extract": {
-          "url": {
-            "css": "...",
-            "value": "@href"
-          }
-        },
-        "template": {
-          "url": "{{ url | to_uri: _response_.url }}"
-        }
-      },
-      "schedule": "every_30m",
-      "keep_events_for": 2592000,
-      "propagate_immediately": false
     },
     {
       "type": "Agents::WebsiteAgent",
@@ -237,7 +211,7 @@
     },
     {
       "source": 2,
-      "receiver": 8
+      "receiver": 7
     },
     {
       "source": 3,
@@ -245,11 +219,11 @@
     },
     {
       "source": 4,
-      "receiver": 7
+      "receiver": 6
     },
     {
       "source": 5,
-      "receiver": 7
+      "receiver": 6
     },
     {
       "source": 6,
@@ -262,10 +236,6 @@
     {
       "source": 8,
       "receiver": 9
-    },
-    {
-      "source": 9,
-      "receiver": 10
     }
   ]
 }
