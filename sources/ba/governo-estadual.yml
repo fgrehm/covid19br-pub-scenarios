@@ -26,10 +26,9 @@ inputs:
         full_text:
           css: "#main-content .node--type-noticias .field--name-body"
           value: "string(.)"
-        # TODO: Get full res image, this is tiny
         image_url:
-          css: ".galeria-multimidia .field--item:first-of-type img"
-          value: "@src"
+          css: ".galeria-multimidia .field--item:first-of-type a"
+          value: "@href"
           repeat: true
         published_at:
           css: "#main-content .field--name-field-data-da-noticia"

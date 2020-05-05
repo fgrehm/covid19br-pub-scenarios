@@ -3,7 +3,7 @@
   "name": "[BA] Governo Estadual (v1)",
   "description": "Notícias e tweets",
   "guid": "br-gov-ba-v1",
-  "exported_at": "2020-05-01 23:37:24 -0300",
+  "exported_at": "2020-05-05 19:22:48 -0300",
   "agents": [
     {
       "type": "Agents::TwitterUserAgent",
@@ -124,8 +124,8 @@
             "value": "string(.)"
           },
           "image_url": {
-            "css": ".galeria-multimidia .field--item:first-of-type img",
-            "value": "@src",
+            "css": ".galeria-multimidia .field--item:first-of-type a",
+            "value": "@href",
             "repeat": true
           },
           "published_at": {
