@@ -18,8 +18,8 @@ inputs:
           css: "h1.title"
           value: "string(.)"
         excerpt:
-          css: "meta[property='og:description']"
-          value: "@content"
+          css: "header.article-header .excerpt"
+          value: "string(.)"
         full_text:
           css: "article.article-main"
           value: "string(.)"
