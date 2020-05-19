@@ -10,8 +10,6 @@ inputs:
     crawler:
       urls:
       - "http://www.ba.gov.br/noticias"
-      - "http://www.ba.gov.br/noticias?field_categoria_target_id=All&field_tags_target_id&sort_by=field_data_da_noticia_value&sort_order=DESC&page=1"
-      - "http://www.ba.gov.br/noticias?field_categoria_target_id=All&field_tags_target_id&sort_by=field_data_da_noticia_value&sort_order=DESC&page=2"
       link_extractor:
         css: ".item-list ul.list-news .views-field-title a"
         value: "@href"
