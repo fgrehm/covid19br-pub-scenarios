@@ -3,7 +3,7 @@
   "name": "[AC] Governo Estadual (v1)",
   "description": "Notícias e tweets",
   "guid": "br-gov-ac-v1",
-  "exported_at": "2020-05-01 23:37:24 -0300",
+  "exported_at": "2020-05-18 22:40:14 -0300",
   "agents": [
     {
       "type": "Agents::TwitterUserAgent",
@@ -57,6 +57,97 @@
       },
       "keep_events_for": 86400,
       "propagate_immediately": false
+    },
+    {
+      "type": "Agents::RssAgent",
+      "name": "[AC] Governo Estadual (v1) - Articles Ingestion - RSS Watcher",
+      "disabled": false,
+      "guid": "br-gov-ac-v1-articles-rss-input",
+      "options": {
+        "expected_update_period_in_days": "1",
+        "clean": "true",
+        "url": "https://agencia.ac.gov.br/feed/"
+      },
+      "schedule": "every_30m",
+      "keep_events_for": 2592000
+    },
+    {
+      "type": "Agents::JavaScriptAgent",
+      "name": "[AC] Governo Estadual (v1) - Articles Ingestion - RSS Wrap",
+      "disabled": false,
+      "guid": "br-gov-ac-v1-articles-rss-wrap",
+      "options": {
+        "language": "JavaScript",
+        "code": "Agent.receive = function() {\r  var events = this.incomingEvents();\r  for(var i = 0; i < events.length; i++) {\r    var payload = events[i].payload;\r    this.createEvent({ rss_item: payload, url: payload.url });\r  }\r}\r",
+        "expected_receive_period_in_days": "1",
+        "expected_update_period_in_days": "1"
+      },
+      "schedule": "never",
+      "keep_events_for": 86400,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::WebhookAgent",
+      "name": "[AC] Governo Estadual (v1) - Articles Ingestion - Manual Backfill",
+      "disabled": false,
+      "guid": "br-gov-ac-v1-articles-backfill",
+      "options": {
+        "secret": "{% credential webhooks-secret %}",
+        "expected_receive_period_in_days": "365",
+        "payload_path": "._json",
+        "event_headers": "",
+        "event_headers_key": "headers"
+      },
+      "keep_events_for": 2592000
+    },
+    {
+      "type": "Agents::WebsiteAgent",
+      "name": "[AC] Governo Estadual (v1) - Articles Ingestion - Scrape",
+      "disabled": false,
+      "guid": "br-gov-ac-v1-articles-scrape",
+      "options": {
+        "expected_update_period_in_days": "1",
+        "url_from_event": "{{ url | strip }}",
+        "type": "html",
+        "mode": "merge",
+        "extract": {
+          "title": {
+            "css": "article.post h1.entry-title",
+            "value": "string(.)"
+          },
+          "excerpt": {
+            "css": "meta[name='og:description']",
+            "value": "@content"
+          },
+          "full_text": {
+            "css": "article.post .entry-content",
+            "value": "string(.)"
+          },
+          "image_url": {
+            "css": "meta[name='og:image']",
+            "value": "@content"
+          },
+          "published_at": {
+            "css": "meta[name='article:published_time']",
+            "value": "@content"
+          }
+        },
+        "template": {
+          "title": "{{ title | strip }}",
+          "excerpt": "{{ excerpt | strip }}",
+          "full_text": "{{ full_text | strip }}",
+          "image_url": "{% if image_url %}{{ image_url | strip | to_uri: _response_.url }}{% endif %}",
+          "url": "{{ url | strip }}",
+          "found_at": "{{ \"now\" | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "published_at": "{{ published_at | strip | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "updated_at": "{{ updated_at | strip | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "content_type": "article",
+          "date": "{{ date | strip | date: '%Y-%m-%d %H:%M:%S' }}"
+        }
+      },
+      "schedule": "never",
+      "keep_events_for": 2592000,
+      "propagate_immediately": true
     },
     {
       "type": "Agents::EventFormattingAgent",
@@ -124,7 +215,7 @@
     },
     {
       "source": 2,
-      "receiver": 3
+      "receiver": 7
     },
     {
       "source": 3,
@@ -132,7 +223,23 @@
     },
     {
       "source": 4,
-      "receiver": 5
+      "receiver": 6
+    },
+    {
+      "source": 5,
+      "receiver": 6
+    },
+    {
+      "source": 6,
+      "receiver": 7
+    },
+    {
+      "source": 7,
+      "receiver": 8
+    },
+    {
+      "source": 8,
+      "receiver": 9
     }
   ]
 }

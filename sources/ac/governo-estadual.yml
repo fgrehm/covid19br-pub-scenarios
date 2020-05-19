@@ -6,5 +6,27 @@ metadata:
 inputs:
   tweets:
     user: "GovernoAcre"
+  articles:
+    rss:
+      url: "https://agencia.ac.gov.br/feed/"
+    scraper:
+      extract:
+        title:
+          css: "article.post h1.entry-title"
+          value: "string(.)"
+        excerpt:
+          css: "meta[name='og:description']"
+          value: "@content"
+        full_text:
+          css: "article.post .entry-content"
+          value: "string(.)"
+        image_url:
+          css: "meta[name='og:image']"
+          value: "@content"
+        published_at:
+          css: "meta[name='article:published_time']"
+          value: "@content"
+      template:
+        date: "{{ date | strip | date: '%Y-%m-%d %H:%M:%S' }}"
 # outputs:
 #   s3: true
