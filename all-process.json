@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "name": "[ALL] Process - old",
+  "description": "No description provided",
+  "source_url": false,
+  "guid": "1f3ddad3cff65090614c3940b417f66e",
+  "tag_fg_color": "#ffffff",
+  "tag_bg_color": "#5bc0de",
+  "icon": "gear",
+  "exported_at": "2020-05-19T01:24:59Z",
+  "agents": [
+    {
+      "type": "Agents::PostAgent",
+      "name": "[TODOS] Notificar API",
+      "disabled": false,
+      "guid": "2604e0cac3cd94ae5522621e13ad00b3",
+      "options": {
+        "post_url": "https://covid19br.pub/webhook",
+        "expected_receive_period_in_days": "1",
+        "content_type": "json",
+        "method": "post",
+        "emit_events": "true",
+        "output_mode": "clean",
+        "basic_auth": "{% credential website-webhook-user %}:{% credential website-webhook-password %}",
+        "payload": {
+          "key": "{{ key }}"
+        }
+      },
+      "schedule": "never",
+      "keep_events_for": 604800,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::ReadFileAgent",
+      "name": "[TODOS] Ler JSON do S3",
+      "disabled": false,
+      "guid": "4326c511148a5f8089a3e63ee754ccc7",
+      "options": {
+        "data_key": "data"
+      },
+      "keep_events_for": 2592000,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "[TODOS] Arquivo alterado no S3",
+      "disabled": false,
+      "guid": "6333225293047ba4513626c476326740",
+      "options": {
+        "expected_receive_period_in_days": "1",
+        "keep_event": "true",
+        "rules": [
+          {
+            "type": "regex",
+            "value": "modified|added",
+            "path": "event_type"
+          }
+        ]
+      },
+      "keep_events_for": 2592000,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::S3Agent",
+      "name": "[TODOS] S3 Watcher",
+      "disabled": false,
+      "guid": "b8fc98372d42de048456f55d647af869",
+      "options": {
+        "mode": "read",
+        "access_key_id": "{% credential aws-key-id %}",
+        "access_key_secret": "{% credential aws-key-secret %}",
+        "region": "us-east-1",
+        "watch": "true",
+        "bucket": "{% credential aws-bucket-input %}",
+        "filename": "",
+        "data": ""
+      },
+      "schedule": "every_30m",
+      "keep_events_for": 604800,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::JavaScriptAgent",
+      "name": "[TODOS] Parse JSON do S3",
+      "disabled": false,
+      "guid": "e5b6bd5993268b58a6acb06eb1229201",
+      "options": {
+        "language": "JavaScript",
+        "code": "Agent.receive = function() {\r\n  var events = this.incomingEvents();\r\n  for(var i = 0; i < events.length; i++) {\r\n    this.createEvent(JSON.parse(events[i].payload.data));\r\n  }\r\n}",
+        "expected_receive_period_in_days": "2",
+        "expected_update_period_in_days": "2"
+      },
+      "schedule": "never",
+      "keep_events_for": 0,
+      "propagate_immediately": false
+    }
+  ],
+  "links": [
+    {
+      "source": 1,
+      "receiver": 4
+    },
+    {
+      "source": 2,
+      "receiver": 1
+    },
+    {
+      "source": 3,
+      "receiver": 2
+    },
+    {
+      "source": 4,
+      "receiver": 0
+    }
+  ],
+  "control_links": [
+
+  ]
+}
