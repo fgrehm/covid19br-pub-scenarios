@@ -26,11 +26,9 @@ inputs:
         image_url:
           css: "meta[property='og:image']"
           value: "@content"
-        published_at:
-          css: "meta[property='article:published_time']"
-          value: "@content"
-        updated_at:
-          css: "meta[property='article:modified_time']"
-          value: "@content"
+      template:
+        # TODO: Only use if rss_item is defined, if not get from HTML. This is going to mess up with backfills that won't have rss_item
+        published_at: "{{ rss_item.date_published }}"
+        updated_at: "{{ rss_item.last_updated }}"
 # outputs:
 #   s3: true

@@ -3,7 +3,7 @@
   "name": "[RS] Governo Estadual (v1)",
   "description": "Notícias e tweets",
   "guid": "br-gov-rs-v1",
-  "exported_at": "2020-05-01 23:37:24 -0300",
+  "exported_at": "2020-05-11 22:10:31 -0300",
   "agents": [
     {
       "type": "Agents::TwitterUserAgent",
@@ -138,8 +138,8 @@
         "mode": "merge",
         "extract": {
           "title": {
-            "css": "meta[property='og:title']",
-            "value": "@content"
+            "css": ".artigo__titulo",
+            "value": "string(.)"
           },
           "excerpt": {
             "css": "meta[property='og:description']",

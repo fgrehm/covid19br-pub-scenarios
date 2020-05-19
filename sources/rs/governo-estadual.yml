@@ -29,8 +29,8 @@ inputs:
           # TODO: Support for these
           #   meta_prop: 'og:title@content'
           #   meta_name: 'twitter:description@content'
-          css: "meta[property='og:title']"
-          value: "@content"
+          css: ".artigo__titulo"
+          value: "string(.)"
         excerpt:
           css: "meta[property='og:description']"
           value: "@content"

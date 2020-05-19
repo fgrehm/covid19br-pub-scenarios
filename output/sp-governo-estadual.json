@@ -3,7 +3,7 @@
   "name": "[SP] Governo Estadual (v1)",
   "description": "Notícias e tweets",
   "guid": "br-gov-sp-v1",
-  "exported_at": "2020-05-07 18:01:49 -0300",
+  "exported_at": "2020-05-07 18:14:03 -0300",
   "agents": [
     {
       "type": "Agents::TwitterUserAgent",
@@ -126,14 +126,6 @@
           "image_url": {
             "css": "meta[property='og:image']",
             "value": "@content"
-          },
-          "published_at": {
-            "css": "meta[property='article:published_time']",
-            "value": "@content"
-          },
-          "updated_at": {
-            "css": "meta[property='article:modified_time']",
-            "value": "@content"
           }
         },
         "template": {
@@ -143,8 +135,8 @@
           "image_url": "{% if image_url %}{{ image_url | strip | to_uri: _response_.url }}{% endif %}",
           "url": "{{ url | strip }}",
           "found_at": "{{ \"now\" | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
-          "published_at": "{{ published_at | strip | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
-          "updated_at": "{{ updated_at | strip | date: \"%Y-%m-%d %H:%M:%S %z\" }}",
+          "published_at": "{{ rss_item.date_published }}",
+          "updated_at": "{{ rss_item.last_updated }}",
           "content_type": "article"
         }
       },
